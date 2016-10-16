@@ -1,0 +1,8 @@
+c:\users\alexandre\documents\visual studio 2010\Projects\CalendarGenerator\CalendarGenerator\bin\Debug\CalendarGenerator.exe
+c:\users\alexandre\documents\visual studio 2010\Projects\CalendarGenerator\CalendarGenerator\bin\Debug\CalendarGenerator.pdb
+c:\users\alexandre\documents\visual studio 2010\Projects\CalendarGenerator\CalendarGenerator\obj\x86\Debug\CalendarGenerator.exe
+c:\users\alexandre\documents\visual studio 2010\Projects\CalendarGenerator\CalendarGenerator\obj\x86\Debug\CalendarGenerator.pdb
+O:\CalendarGenerator\CalendarGenerator\obj\x86\Debug\CalendarGenerator.exe
+O:\CalendarGenerator\CalendarGenerator\obj\x86\Debug\CalendarGenerator.pdb
+O:\CalendarGenerator\CalendarGenerator\bin\Debug\CalendarGenerator.exe
+O:\CalendarGenerator\CalendarGenerator\bin\Debug\CalendarGenerator.pdb

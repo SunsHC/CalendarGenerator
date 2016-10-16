@@ -1,0 +1,4 @@
+c:\Users\Alexandre\Documents\Visual Studio 2010\Projects\CalendarGenerator\CalendarGenerator\bin\Release\CalendarGenerator.exe
+c:\Users\Alexandre\Documents\Visual Studio 2010\Projects\CalendarGenerator\CalendarGenerator\bin\Release\CalendarGenerator.pdb
+c:\Users\Alexandre\Documents\Visual Studio 2010\Projects\CalendarGenerator\CalendarGenerator\obj\x86\Release\CalendarGenerator.exe
+c:\Users\Alexandre\Documents\Visual Studio 2010\Projects\CalendarGenerator\CalendarGenerator\obj\x86\Release\CalendarGenerator.pdb
