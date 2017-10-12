@@ -6,3 +6,8 @@ O:\CalendarGenerator\CalendarGenerator\obj\x86\Debug\CalendarGenerator.exe
 O:\CalendarGenerator\CalendarGenerator\obj\x86\Debug\CalendarGenerator.pdb
 O:\CalendarGenerator\CalendarGenerator\bin\Debug\CalendarGenerator.exe
 O:\CalendarGenerator\CalendarGenerator\bin\Debug\CalendarGenerator.pdb
+E:\DOCS\prog\CalendarGenerator\CalendarGenerator\CalendarGenerator\obj\x86\Debug\CalendarGenerator.exe
+E:\DOCS\prog\CalendarGenerator\CalendarGenerator\CalendarGenerator\obj\x86\Debug\CalendarGenerator.pdb
+E:\DOCS\prog\CalendarGenerator\CalendarGenerator\CalendarGenerator\bin\Debug\CalendarGenerator.exe
+E:\DOCS\prog\CalendarGenerator\CalendarGenerator\CalendarGenerator\bin\Debug\CalendarGenerator.pdb
+E:\DOCS\prog\CalendarGenerator\CalendarGenerator\CalendarGenerator\obj\x86\Debug\CalendarGenerator.csprojResolveAssemblyReference.cache

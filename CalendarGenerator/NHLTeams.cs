@@ -47,6 +47,7 @@ namespace CalendarGenerator
         TBL,
         TOR,
         VAN,
+        VGK,
         WPG,
         WSH
     }
