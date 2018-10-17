@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace CalendarGenerator
 {
@@ -12,43 +14,44 @@ namespace CalendarGenerator
         private int _numberOfWeeks = 0;
 
         
-        public Dictionary<NHLTeam, string> TeamName = new Dictionary<NHLTeam, string>()
+        public Dictionary<int, NHLTeam> TeamName = new Dictionary<int, NHLTeam>()
         {
-            { NHLTeam.ANA, "Anaheim Ducks" },
-            { NHLTeam.ARI, "Arizona Coyotes" },
-            { NHLTeam.BOS, "Boston Bruins" },
-            { NHLTeam.BUF, "Buffalo Sabres" },
-            { NHLTeam.CAR, "Carolina Hurricanes" },
-            { NHLTeam.CBJ, "Columbus Blue Jackets" },
-            { NHLTeam.CGY, "Calgary Flames" },
-            { NHLTeam.CHI, "Chicago Blackhawks" },
-            { NHLTeam.COL, "Colorado Avalanche" },
-            { NHLTeam.DAL, "Dallas Stars" },
-            { NHLTeam.DET, "Detroit Red Wings" },
-            { NHLTeam.EDM, "Edmonton Oilers" },
-            { NHLTeam.FLA, "Florida Panthers" },
-            { NHLTeam.LAK, "Los Angeles Kings" },
-            { NHLTeam.MIN, "Minnesota Wild" },
-            { NHLTeam.MTL, "Montreal Canadiens" },
-            { NHLTeam.NJD, "New Jersey Devils" },
-            { NHLTeam.NSH, "Nashville Predators" },
-            { NHLTeam.NYI, "New York Islanders" },
-            { NHLTeam.NYR, "New York Rangers" },
-            { NHLTeam.OTT, "Ottawa Senators" },
-            { NHLTeam.PHI, "Philadelphia Flyers" },
-            { NHLTeam.PIT, "Pittsburgh Penguins" },
-            { NHLTeam.SJS, "San Jose Sharks" },
-            { NHLTeam.STL, "St. Louis Blues" },
-            { NHLTeam.TBL, "Tampa Bay Lightning" },
-            { NHLTeam.TOR, "Toronto Maple Leafs" },
-            { NHLTeam.VAN, "Vancouver Canucks" },
-            { NHLTeam.VGK, "Vegas Golden Knights" },
-            { NHLTeam.WPG, "Winnipeg Jets" },
-            { NHLTeam.WSH, "Washington Capitals" },
+            { 24, NHLTeam.ANA },
+            { 53, NHLTeam.ARI },
+            { 6 , NHLTeam.BOS},
+            { 7 , NHLTeam.BUF},
+            { 12, NHLTeam.CAR },
+            { 29, NHLTeam.CBJ },
+            { 20, NHLTeam.CGY },
+            { 16, NHLTeam.CHI },
+            { 21, NHLTeam.COL },
+            { 25, NHLTeam.DAL },
+            { 17, NHLTeam.DET },
+            { 22, NHLTeam.EDM },
+            { 13, NHLTeam.FLA },
+            { 26, NHLTeam.LAK },
+            { 30, NHLTeam.MIN },
+            { 8 , NHLTeam.MTL},
+            { 1 , NHLTeam.NJD},
+            { 18, NHLTeam.NSH },
+            { 2 , NHLTeam.NYI},
+            { 3 , NHLTeam.NYR},
+            { 9 , NHLTeam.OTT},
+            { 4 , NHLTeam.PHI},
+            { 5 , NHLTeam.PIT},
+            { 28, NHLTeam.SJS },
+            { 19, NHLTeam.STL },
+            { 14, NHLTeam.TBL },
+            { 10, NHLTeam.TOR },
+            { 23, NHLTeam.VAN },
+            { 54, NHLTeam.VGK },
+            { 52, NHLTeam.WPG },
+            { 15, NHLTeam.WSH },
         };
 
-        internal void CreateMatchups(DateTime startDate)
+        internal void CreateMatchups()
         {
+            DateTime startDate = new DateTime(2018, 10, 3);
             int parsedYear = startDate.Year;
 
             // This list contains the positions where the nchl weeks starts (from 1-366). We will use it as reference when assigning the week
@@ -80,35 +83,51 @@ namespace CalendarGenerator
             int currentWeek = 1;
             bool newYearTransition = false;
 
-            using (StreamReader sr = new StreamReader("rawschedule.csv"))
+
+
+            using (WebClient client = new WebClient())
             {
-                
+                //client.Proxy = new MtxProxy();               
+                string gamesJsonHTMLLink = $"https://statsapi.web.nhl.com/api/v1/schedule?site=en_nhl&startDate=2018-10-03&endDate=2019-04-06";
 
-                while (sr.Peek() >= 0)
+                string result = client.DownloadString(gamesJsonHTMLLink);
+                JsonDates jsonDates = JsonConvert.DeserializeObject<JsonDates>(result);
+
+
+                foreach (var date in jsonDates.Dates)
                 {
-                    // Read the current line to see if it's a date or a match
-                    string lineRead = sr.ReadLine();
+                    var matchupDate = DateTime.Parse(date.Date);
 
-                    var matchupDate = DateTime.Parse(lineRead.Split(',')[0]);
-                    var visitorTeam = TeamName.FirstOrDefault(tn => tn.Value == lineRead.Split(',')[2]).Key;
-                    var homeTeam = TeamName.FirstOrDefault(tn => tn.Value == lineRead.Split(',')[3]).Key;
-
-                    if (newYearTransition && matchupDate.DayOfYear <= weekStart[currentWeek])
-                        newYearTransition = false;
-
-                    if (matchupDate.DayOfYear >= weekStart[currentWeek])
+                    foreach (var game in date.Games)
                     {
-                        if (!newYearTransition)
+                        try
                         {
-                            int prevWeek = weekStart[currentWeek];
-                            currentWeek++;
+                            NHLTeam awayTeam = TeamName[Convert.ToInt32(game.Teams.Away.Team.Id)];
+                            NHLTeam homeTeam = TeamName[Convert.ToInt32(game.Teams.Home.Team.Id)];
 
-                            if (weekStart[currentWeek] < prevWeek)
-                                newYearTransition = true;
+                            if (newYearTransition && matchupDate.DayOfYear <= weekStart[currentWeek])
+                                newYearTransition = false;
+
+                            if (matchupDate.DayOfYear >= weekStart[currentWeek])
+                            {
+                                if (!newYearTransition)
+                                {
+                                    int prevWeek = weekStart[currentWeek];
+                                    currentWeek++;
+
+                                    if (weekStart[currentWeek] < prevWeek)
+                                        newYearTransition = true;
+                                }
+                            }
+
+                            _matchups.Add(new Matchup(awayTeam, homeTeam, matchupDate, currentWeek));
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine($"New team or european team: {ex.Message}");
+                            continue;
                         }
                     }
-
-                    _matchups.Add(new Matchup(visitorTeam, homeTeam, matchupDate, currentWeek));
                 }
             }
 
@@ -117,7 +136,7 @@ namespace CalendarGenerator
 
         internal void OutputSeasonCalendar()
         {
-        	using (StreamWriter sw = new StreamWriter("SeasonSchedule.csv"))
+        	using (StreamWriter sw = new StreamWriter("Calendrier_Saison.csv"))
         	{
         		string lineToWrite = string.Empty;
 
@@ -127,7 +146,7 @@ namespace CalendarGenerator
         		}
         		sw.WriteLine(lineToWrite);
 
-                foreach (NHLTeam team in TeamName.Keys)
+                foreach (NHLTeam team in TeamName.Values)
     			{
     				lineToWrite = team.ToString();
 
@@ -149,7 +168,7 @@ namespace CalendarGenerator
                 {
                     string lineToWrite = string.Empty;
 
-                    foreach (NHLTeam team in TeamName.Keys)
+                    foreach (NHLTeam team in TeamName.Values)
                     {
                         lineToWrite = team.ToString();
                         sw.WriteLine(lineToWrite);
@@ -172,6 +191,28 @@ namespace CalendarGenerator
         	return _matchups.Where(match => (match.VisitorTeam == team || match.LocalTeam == team)
         	 && match.NCHLWeek == week).ToList();
 
+        }
+    }
+
+    internal class MtxProxy : IWebProxy
+    {
+        public ICredentials Credentials
+        {
+            get
+            {
+                return new NetworkCredential("alamarch", "iaia11()");
+            }
+            set { throw new NotImplementedException(); }
+        }
+
+        public Uri GetProxy(Uri destination)
+        {
+            return new Uri("http://webproxy.matrox.com:9090");
+        }
+
+        public bool IsBypassed(Uri host)
+        {
+            return false;
         }
     }
 }
